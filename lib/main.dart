@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() => runApp(MyApp());
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           child: ChangeForm(),
+          // child:SecondRoute(),
         ),
       ),
     );
@@ -49,13 +50,13 @@ class ChangeForm extends StatefulWidget {
 }
 
 class _ChangeFormState extends State<ChangeForm> {
-  int _count = 0;
+  // int _count = 0;
 
-  void _handlePressed() {
-    setState(() {
-      _count++;
-    });
-  }
+  // void _handlePressed() {
+  //   setState(() {
+  //     _count++;
+  //   });
+  // }
 
   Widget build(BuildContext context) {
     return Container(
@@ -83,10 +84,10 @@ class _ChangeFormState extends State<ChangeForm> {
               borderRadius: BorderRadius.all(Radius.circular(0.0)),
             ),
             child:Container(
-              padding: const EdgeInsets.only(top:15.0,left:15.0,right:15.0),
+              padding: const EdgeInsets.only(top:40.0,left:15.0,right:15.0),
               margin: const EdgeInsets.all(4.0),
               height: 100,
-              width: 100,
+              width: 200,
               child: const Text(
                   'フォルダ選択',
                   style: TextStyle(
@@ -101,22 +102,160 @@ class _ChangeFormState extends State<ChangeForm> {
     );
   }
 }
+class Grade{
+  final String name;
+  final int score;
+  final int aiscore;
 
-class SecondRoute extends StatelessWidget {
+  const Grade(this.name,this.score,this.aiscore);
+}
+class SecondRoute extends StatefulWidget {
+  @override
+  _SecondRoute createState() => _SecondRoute();
+}
+class _SecondRoute extends State<SecondRoute> {
+  List<Grade> grades = const[
+    Grade('0001.png',1,1),
+    Grade('0002.png',1,1),
+    Grade('0003.png',0,1),
+    Grade('0004.png',1,1),
+    Grade('0005.png',1,1),
+    Grade('0006.png',0,1),
+  ];
+
+  List<String> _selected =[];
+  bool _sort = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        title: Row(
+            // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
+            children: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                child: Image.asset('images/Thinkoutlogo.png',
+                fit: BoxFit.cover,
+                height: 35.0,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left:300.0),
+                // margin: const EdgeInsets.all(4.0),
+                child: IconButton(
+                  icon:Icon(Icons.clear),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Container(
+                // padding: const EdgeInsets.only(right:5.0),
+                // margin: const EdgeInsets.all(4.0),
+                child: IconButton(
+                  icon:Icon(Icons.save),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped.
-          },
-          child: Text('Go back!'),
+      body: DataTable(
+        sortAscending: _sort,
+        sortColumnIndex: 1,
+        columns: [
+          const DataColumn(
+            label:Text("画像"),
+          ),
+          const DataColumn(
+            label:Text("ファイル名"),
+          ),
+          DataColumn(
+            label: const Text("白内障診断"),
+            numeric:true,
+            onSort: (int columnIndex,bool ascending){
+              if(columnIndex == 1){
+                if(ascending){
+                  grades.sort((a,b)=>a.score.compareTo(b.score));
+                }else{
+                  grades.sort((a,b)=> b.score.compareTo(a.score));
+                }
+                setState((){
+                  _sort = !_sort;
+                });
+              }
+            },
+          ),
+          DataColumn(
+            label: const Text("白内障診断AI"),
+            numeric:true,
+            onSort: (int columnIndex,bool ascending){
+              if(columnIndex == 1){
+                if(ascending){
+                  grades.sort((a,b)=>a.score.compareTo(b.score));
+                }else{
+                  grades.sort((a,b)=> b.score.compareTo(a.score));
+                }
+                setState((){
+                  _sort = !_sort;
+                });
+              }
+            },
+          ),
+        ],
+        rows: [
+          for(var grade in grades)
+            DataRow(
+              // selected: _selected.contains(grade.name),
+              // onSelectChanged: (bool value){
+              //   setState((){
+              //     if(value){
+              //       _selected.add(grade.name);
+              //     }else{
+              //       _selected.remove(grade.name);
+              //     }
+              //   });
+              // },
+              cells:[
+                DataCell(
+                  FlatButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  child: Image.asset('images/Thinkoutlogo.png',
+                  fit: BoxFit.cover,
+                  height: 20.0,
+                  ),
+                ),
+                ),
+                DataCell(
+                  Text(grade.name),
+                ),
+                DataCell(
+                  Text(grade.score.toString()),
+                ),
+                DataCell(
+                  Text(grade.aiscore.toString()),
+                )
+              ],
+            ),
+        ],
         ),
-      ),
     );
   }
+}
+
+
+
+class Memo{
+  final int id;
+  final String text;
+  final int priority;
+
+  Memo({this.id,this.text,this.priority});
 }
