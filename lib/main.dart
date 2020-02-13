@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:photo_view/photo_view.dart';
 
 void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
@@ -225,7 +226,10 @@ class _SecondRoute extends State<SecondRoute> {
                 DataCell(
                   FlatButton(
                   onPressed: (){
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ThirdRoute()),
+                    );
                   },
                   child: Image.asset('images/Thinkoutlogo.png',
                   fit: BoxFit.cover,
@@ -249,7 +253,39 @@ class _SecondRoute extends State<SecondRoute> {
     );
   }
 }
+class ThirdRoute extends StatefulWidget {
+  @override
+  _ThirdRoute createState() => _ThirdRoute();
+}
+class _ThirdRoute extends State<ThirdRoute> {
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+            // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
+            children: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                child: Image.asset('images/Thinkoutlogo.png',
+                fit: BoxFit.cover,
+                height: 35.0,
+                ),
+              ),
+            ],
+          ),
+      ),
+      body: Container(
+              child:PhotoView(
+              imageProvider: AssetImage('images/Thinkoutlogo.png'),
+              )
+            )
+    );
+  }
+}
 
 
 class Memo{
