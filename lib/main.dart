@@ -101,13 +101,13 @@ class _ChangeFormState extends State<ChangeForm> {
 
 class Grade {
   final String name;
-  final int cataractScore_AI;
-  final int hypertensionScore_AI;
-  final int cataractScore_Dr;
-  final int hypertensionScore_Dr;
+  final int cataractScoreAI;
+  final int hypertensionScoreAI;
+  final int cataractScoreDr;
+  final int hypertensionScoreDr;
 
-  const Grade(this.name, this.cataractScore_AI, this.hypertensionScore_AI,
-      this.cataractScore_Dr, this.hypertensionScore_Dr);
+  const Grade(this.name, this.cataractScoreAI, this.hypertensionScoreAI,
+      this.cataractScoreDr, this.hypertensionScoreDr);
 }
 
 class SecondRoute extends StatefulWidget {
@@ -128,7 +128,7 @@ class _SecondRoute extends State<SecondRoute> {
 
   List<String> _selected = [];
   bool _sort = true;
-  int _sortColumnIndex = 2;
+  int _sortColumnIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -177,14 +177,35 @@ class _SecondRoute extends State<SecondRoute> {
           const DataColumn(
             label: Text("画像"),
           ),
-          const DataColumn(
+          DataColumn(
             label: Text("ファイル名"),
+            numeric: true,
+            onSort: (int columnIndex, bool ascending) {
+              // print("cataractScoreAI:" + ascending.toString());
+              if (columnIndex != _sortColumnIndex) {
+                _sortColumnIndex = 1;
+                setState(() {
+                  _sort = false; //ここで変更しておかないと
+                });
+              }
+              if (ascending) {
+                grades.sort(
+                    (a, b) => a.name.compareTo(b.name));
+              } else {
+                grades.sort(
+                    (a, b) => b.name.compareTo(a.name));
+              }
+              setState(() {
+                _sort = !_sort; //これがないと繰り返しソート出来ない？
+                // print("_sort:" + _sort.toString());
+              });
+            },
           ),
           DataColumn(
             label: const Text("白内障診断（AI）"),
             numeric: true,
             onSort: (int columnIndex, bool ascending) {
-              print("cataractScore_AI:" + ascending.toString());
+              // print("cataractScoreAI:" + ascending.toString());
               if (columnIndex != _sortColumnIndex) {
                 _sortColumnIndex = 2;
                 setState(() {
@@ -193,14 +214,14 @@ class _SecondRoute extends State<SecondRoute> {
               }
               if (ascending) {
                 grades.sort(
-                    (a, b) => a.cataractScore_AI.compareTo(b.cataractScore_AI));
+                    (a, b) => a.cataractScoreAI.compareTo(b.cataractScoreAI));
               } else {
                 grades.sort(
-                    (a, b) => b.cataractScore_AI.compareTo(a.cataractScore_AI));
+                    (a, b) => b.cataractScoreAI.compareTo(a.cataractScoreAI));
               }
               setState(() {
                 _sort = !_sort; //これがないと繰り返しソート出来ない？
-                print("_sort:" + _sort.toString());
+                // print("_sort:" + _sort.toString());
               });
             },
           ),
@@ -208,7 +229,7 @@ class _SecondRoute extends State<SecondRoute> {
             label: const Text("高血圧診断（AI）"),
             numeric: true,
             onSort: (int columnIndex, bool ascending) {
-              print("hypertensionScore_AI:" + ascending.toString());
+              // print("hypertensionScoreAI:" + ascending.toString());
               if (columnIndex != _sortColumnIndex) {
                 _sortColumnIndex = 3;
                 setState(() {
@@ -217,14 +238,14 @@ class _SecondRoute extends State<SecondRoute> {
               }
               if (ascending) {
                 grades.sort((a, b) =>
-                    a.hypertensionScore_AI.compareTo(b.hypertensionScore_AI));
+                    a.hypertensionScoreAI.compareTo(b.hypertensionScoreAI));
               } else {
                 grades.sort((a, b) =>
-                    b.hypertensionScore_AI.compareTo(a.hypertensionScore_AI));
+                    b.hypertensionScoreAI.compareTo(a.hypertensionScoreAI));
               }
               setState(() {
                 _sort = !_sort; //これがないと繰り返しソート出来ない？
-                print("_sort:" + _sort.toString());
+                // print("_sort:" + _sort.toString());
               });
             },
           ),
@@ -232,7 +253,7 @@ class _SecondRoute extends State<SecondRoute> {
             label: const Text("白内障診断（Dr）"),
             numeric: true,
             onSort: (int columnIndex, bool ascending) {
-              print("cataractScore_Dr:" + ascending.toString());
+              // print("cataractScoreDr:" + ascending.toString());
               if (columnIndex != _sortColumnIndex) {
                 _sortColumnIndex = 4;
                 setState(() {
@@ -241,14 +262,14 @@ class _SecondRoute extends State<SecondRoute> {
               }
               if (ascending) {
                 grades.sort((a, b) =>
-                    a.cataractScore_Dr.compareTo(b.cataractScore_Dr));
+                    a.cataractScoreDr.compareTo(b.cataractScoreDr));
               } else {
                 grades.sort((a, b) =>
-                    b.cataractScore_Dr.compareTo(a.cataractScore_Dr));
+                    b.cataractScoreDr.compareTo(a.cataractScoreDr));
               }
               setState(() {
                 _sort = !_sort; //これがないと繰り返しソート出来ない？
-                print("_sort:" + _sort.toString());
+                // print("_sort:" + _sort.toString());
               });
             },
           ),
@@ -256,7 +277,7 @@ class _SecondRoute extends State<SecondRoute> {
             label: const Text("高血圧診断（Dr）"),
             numeric: true,
             onSort: (int columnIndex, bool ascending) {
-              print("hypertensionScore_Dr:" + ascending.toString());
+              // print("hypertensionScoreDr:" + ascending.toString());
               if (columnIndex != _sortColumnIndex) {
                 _sortColumnIndex = 5;
                 setState(() {
@@ -265,14 +286,14 @@ class _SecondRoute extends State<SecondRoute> {
               }
               if (ascending) {
                 grades.sort((a, b) =>
-                    a.hypertensionScore_Dr.compareTo(b.hypertensionScore_Dr));
+                    a.hypertensionScoreDr.compareTo(b.hypertensionScoreDr));
               } else {
                 grades.sort((a, b) =>
-                    b.hypertensionScore_Dr.compareTo(a.hypertensionScore_Dr));
+                    b.hypertensionScoreDr.compareTo(a.hypertensionScoreDr));
               }
               setState(() {
                 _sort = !_sort; //これがないと繰り返しソート出来ない？
-                print("_sort:" + _sort.toString());
+                // print("_sort:" + _sort.toString());
               });
             },
           ),
@@ -310,16 +331,16 @@ class _SecondRoute extends State<SecondRoute> {
                   Text(grade.name),
                 ),
                 DataCell(
-                  Text(grade.cataractScore_AI.toString()),
+                  Text(grade.cataractScoreAI.toString()),
                 ),
                 DataCell(
-                  Text(grade.hypertensionScore_AI.toString()),
+                  Text(grade.hypertensionScoreAI.toString()),
                 ),
                 DataCell(
-                  Text(grade.cataractScore_Dr.toString()),
+                  Text(grade.cataractScoreDr.toString()),
                 ),
                 DataCell(
-                  Text(grade.hypertensionScore_Dr.toString()),
+                  Text(grade.hypertensionScoreDr.toString()),
                 )
               ],
             ),
