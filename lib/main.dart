@@ -173,10 +173,11 @@ class _SecondRoute extends State<SecondRoute> {
         ),
       ),
       body: Container(
+        width: 1920,
         child: DataTable(
           sortAscending: _sort,
           sortColumnIndex: _sortColumnIndex,
-          horizontalMargin: 10,
+          horizontalMargin: 0,
           columns: [
             const DataColumn(
               label: Text("画像"),
@@ -352,15 +353,22 @@ class _SecondRoute extends State<SecondRoute> {
                     Text(grade.hypertensionScoreDr.toString()),
                   ),
                   DataCell(
-                    EditableText(
-                      maxLines: 1,
-                      selectionWidthStyle: BoxWidthStyle.max,
-                      forceLine: true,
-                      controller: TextEditingController.fromValue(null),
-                      focusNode: FocusNode(canRequestFocus: true),
-                      cursorColor: Colors.blue,
-                      style: TextStyle(color: Colors.black),
-                      backgroundCursorColor: Colors.black,
+                    Container(
+                      width: 800,
+                      // height: 100,
+                      child: EditableText(
+                        maxLines: null,
+                        minLines: null,
+                        selectionWidthStyle: BoxWidthStyle.max,
+                        // forceLine: true,
+                        // expands: true,
+                        // textWidthBasis: TextWidthBasis.parent,
+                        controller: TextEditingController.fromValue(null),
+                        focusNode: FocusNode(canRequestFocus: true),
+                        cursorColor: Colors.blue,
+                        style: TextStyle(color: Colors.black),
+                        backgroundCursorColor: Colors.black,
+                      ),
                     ),
                     placeholder: true,
                   ) 
