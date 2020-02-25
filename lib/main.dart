@@ -1,3 +1,6 @@
+import 'dart:html';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_view/photo_view.dart';
@@ -265,6 +268,27 @@ class _ThirdRoute extends State<ThirdRoute> {
   void initState() {
     super.initState();
     scaleStateController = PhotoViewScaleStateController();
+    updateScaleState();
+    mouseEventListener();
+  }
+
+  // マウスのコントロールをウケっとって反映させたい(あとで消す
+  void updateScaleState() {
+    scaleStateController.outputScaleStateStream.listen((event) {
+      print(event);
+    });
+  }
+
+  // マウスホイールの動きを検知する
+  void mouseEventListener() {
+    document.body.onMouseWheel.listen((event) {
+      if (event.deltaY > 0) {
+        print("上方向");
+      }
+      else if (event.deltaY < 0) {
+        print("下方向");
+      }
+    });
   }
 
   @override
@@ -300,9 +324,10 @@ class _ThirdRoute extends State<ThirdRoute> {
         body: Stack(
           children: <Widget>[
             PhotoView(
-                imageProvider: AssetImage("images/Thinkoutlogo.png"),
-                scaleStateController: scaleStateController,
-                minScale: 1),
+              imageProvider: AssetImage("images/Thinkoutlogo.png"),
+              scaleStateController: scaleStateController,
+              minScale: 1,
+            ),
             FlatButton(
               child: Text("Go to original size"),
               onPressed: goBack,
