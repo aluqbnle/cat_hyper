@@ -263,30 +263,21 @@ class ThirdRoute extends StatefulWidget {
 
 class _ThirdRoute extends State<ThirdRoute> {
   PhotoViewScaleStateController scaleStateController;
+  PhotoViewControllerBase controller;
 
   @override
   void initState() {
     super.initState();
+    controller = PhotoViewController();
     scaleStateController = PhotoViewScaleStateController();
-    updateScaleState();
     mouseEventListener();
-  }
-
-  // マウスのコントロールをウケっとって反映させたい(あとで消す
-  void updateScaleState() {
-    scaleStateController.outputScaleStateStream.listen((event) {
-      print(event);
-    });
   }
 
   // マウスホイールの動きを検知する
   void mouseEventListener() {
     document.body.onMouseWheel.listen((event) {
-      if (event.deltaY > 0) {
-        print("上方向");
-      }
-      else if (event.deltaY < 0) {
-        print("下方向");
+      if (controller.scale + event.deltaY / 100 > 1) {
+        controller.scale += event.deltaY / 100;
       }
     });
   }
@@ -324,12 +315,12 @@ class _ThirdRoute extends State<ThirdRoute> {
         body: Stack(
           children: <Widget>[
             PhotoView(
-              imageProvider: AssetImage("images/Thinkoutlogo.png"),
-              scaleStateController: scaleStateController,
-              minScale: 1,
-            ),
+                imageProvider: AssetImage("images/Thinkoutlogo.png"),
+                scaleStateController: scaleStateController,
+                controller: controller,
+                minScale: 1),
             FlatButton(
-              child: Text("Go to original size"),
+              child: Text("サイズを戻す"),
               onPressed: goBack,
             )
           ],
