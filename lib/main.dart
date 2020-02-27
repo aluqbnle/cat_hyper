@@ -129,8 +129,7 @@ class Grade {
 Future<Grade> fetchGrade() async {
   final response = await http.get('http://localhost:3000/data');
   // final response = await http.get('https://dev-test.fujiya228.com/flutter/cat_hyper/sample.json');
-  
-  print(response);
+
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
     // print(response.body);
@@ -157,6 +156,11 @@ class _SecondRoute extends State<SecondRoute> {
     // print('initState:' + grade.toString());
   }
 
+  void _reload() {
+    grade = fetchGrade();
+    setState(() {});
+  }
+
   List<String> _selected = [];
   bool _sort = true;
   int _sortColumnIndex = 1;
@@ -164,264 +168,283 @@ class _SecondRoute extends State<SecondRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
-            children: <Widget>[
-              FlatButton(
+      appBar: AppBar(
+        title: Row(
+          // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
+          children: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Image.asset(
+                'images/Thinkoutlogo.png',
+                fit: BoxFit.cover,
+                height: 35.0,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 300.0),
+              // margin: const EdgeInsets.all(4.0),
+              child: IconButton(
+                icon: Icon(Icons.clear),
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context); //ナビゲーションをもどる
                 },
-                child: Image.asset(
-                  'images/Thinkoutlogo.png',
-                  fit: BoxFit.cover,
-                  height: 35.0,
-                ),
               ),
-              Container(
-                padding: const EdgeInsets.only(left: 300.0),
-                // margin: const EdgeInsets.all(4.0),
-                child: IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed: () {
-                    Navigator.pop(context); //ナビゲーションをもどる
-                  },
-                ),
+            ),
+            Container(
+              // padding: const EdgeInsets.only(right:5.0),
+              // margin: const EdgeInsets.all(4.0),
+              child: IconButton(
+                icon: Icon(Icons.save),
+                onPressed: () {
+                  Navigator.pop(context); //ナビゲーションをもどる
+                },
               ),
-              Container(
-                // padding: const EdgeInsets.only(right:5.0),
-                // margin: const EdgeInsets.all(4.0),
-                child: IconButton(
-                  icon: Icon(Icons.save),
-                  onPressed: () {
-                    Navigator.pop(context); //ナビゲーションをもどる
-                  },
-                ),
+            ),
+            Container(
+              child: IconButton(
+                icon: Icon(Icons.autorenew),
+                onPressed: () => _reload(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        body: SingleChildScrollView(
-            child: Container(
-          width: 1920,
-          child: FutureBuilder<Grade>(
-            future: grade,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                // print(snapshot.data.data);
-                List data = snapshot.data.data;
-                // print(data);
-                return DataTable(
-                  sortAscending: _sort,
-                  sortColumnIndex: _sortColumnIndex,
-                  horizontalMargin: 0,
-                  columns: [
-                    const DataColumn(
-                      label: Text("画像"),
-                    ),
-                    DataColumn(
-                      label: Text("ファイル名"),
-                      numeric: true,
-                      onSort: (int columnIndex, bool ascending) {
-                        // print("cataractScoreAI:" + ascending.toString());
-                        if (columnIndex != _sortColumnIndex) {
-                          _sortColumnIndex = 1;
-                          setState(() {
-                            _sort = false; //ここで変更しておかないと
-                          });
-                        }
-                        if (ascending) {
-                          data.sort((a, b) => a['name'].compareTo(b['name']));
-                        } else {
-                          data.sort((a, b) => b['name'].compareTo(a['name']));
-                        }
+      ),
+      body: SingleChildScrollView(
+          child: Container(
+        width: 1920,
+        child: FutureBuilder<Grade>(
+          future: grade,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              // print(snapshot.data.data);
+              List data = snapshot.data.data;
+              // print(data);
+              return DataTable(
+                sortAscending: _sort,
+                sortColumnIndex: _sortColumnIndex,
+                horizontalMargin: 0,
+                columns: [
+                  const DataColumn(
+                    label: Text("画像"),
+                  ),
+                  DataColumn(
+                    label: Text("ファイル名"),
+                    numeric: true,
+                    onSort: (int columnIndex, bool ascending) {
+                      // print("cataractScoreAI:" + ascending.toString());
+                      if (columnIndex != _sortColumnIndex) {
+                        _sortColumnIndex = 1;
                         setState(() {
-                          _sort = !_sort; //これがないと繰り返しソート出来ない？
-                          // print("_sort:" + _sort.toString());
+                          _sort = false; //ここで変更しておかないと
                         });
-                      },
-                    ),
-                    DataColumn(
-                      label: const Text("白内障診断（AI）"),
-                      numeric: true,
-                      onSort: (int columnIndex, bool ascending) {
-                        // print("cataractScoreAI:" + ascending.toString());
-                        if (columnIndex != _sortColumnIndex) {
-                          _sortColumnIndex = 2;
-                          setState(() {
-                            _sort = false; //ここで変更しておかないと
-                          });
-                        }
-                        if (ascending) {
-                          data.sort((a, b) => a['cataractScoreAI']
-                              .compareTo(b['cataractScoreAI']));
-                        } else {
-                          data.sort((a, b) => b['cataractScoreAI']
-                              .compareTo(a['cataractScoreAI']));
-                        }
+                      }
+                      if (ascending) {
+                        data.sort((a, b) => a['name'].compareTo(b['name']));
+                      } else {
+                        data.sort((a, b) => b['name'].compareTo(a['name']));
+                      }
+                      setState(() {
+                        _sort = !_sort; //これがないと繰り返しソート出来ない？
+                        // print("_sort:" + _sort.toString());
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("白内障診断（AI）"),
+                    numeric: true,
+                    onSort: (int columnIndex, bool ascending) {
+                      // print("cataractScoreAI:" + ascending.toString());
+                      if (columnIndex != _sortColumnIndex) {
+                        _sortColumnIndex = 2;
                         setState(() {
-                          _sort = !_sort; //これがないと繰り返しソート出来ない？
-                          // print("_sort:" + _sort.toString());
+                          _sort = false; //ここで変更しておかないと
                         });
-                      },
-                    ),
-                    DataColumn(
-                      label: const Text("高血圧診断（AI）"),
-                      numeric: true,
-                      onSort: (int columnIndex, bool ascending) {
-                        // print("hypertensionScoreAI:" + ascending.toString());
-                        if (columnIndex != _sortColumnIndex) {
-                          _sortColumnIndex = 3;
-                          setState(() {
-                            _sort = false; //ここで変更しておかないと
-                          });
-                        }
-                        if (ascending) {
-                          data.sort((a, b) => a['hypertensionScoreAI']
-                              .compareTo(b['hypertensionScoreAI']));
-                        } else {
-                          data.sort((a, b) => b['hypertensionScoreAI']
-                              .compareTo(a['hypertensionScoreAI']));
-                        }
+                      }
+                      if (ascending) {
+                        data.sort((a, b) => a['cataractScoreAI']
+                            .compareTo(b['cataractScoreAI']));
+                      } else {
+                        data.sort((a, b) => b['cataractScoreAI']
+                            .compareTo(a['cataractScoreAI']));
+                      }
+                      setState(() {
+                        _sort = !_sort; //これがないと繰り返しソート出来ない？
+                        // print("_sort:" + _sort.toString());
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("高血圧診断（AI）"),
+                    numeric: true,
+                    onSort: (int columnIndex, bool ascending) {
+                      // print("hypertensionScoreAI:" + ascending.toString());
+                      if (columnIndex != _sortColumnIndex) {
+                        _sortColumnIndex = 3;
                         setState(() {
-                          _sort = !_sort; //これがないと繰り返しソート出来ない？
-                          // print("_sort:" + _sort.toString());
+                          _sort = false; //ここで変更しておかないと
                         });
-                      },
-                    ),
-                    DataColumn(
-                      label: const Text("白内障診断（Dr）"),
-                      numeric: true,
-                      onSort: (int columnIndex, bool ascending) {
-                        // print("cataractScoreDr:" + ascending.toString());
-                        if (columnIndex != _sortColumnIndex) {
-                          _sortColumnIndex = 4;
-                          setState(() {
-                            _sort = false; //ここで変更しておかないと
-                          });
-                        }
-                        if (ascending) {
-                          data.sort((a, b) => a['cataractScoreDr']
-                              .compareTo(b['cataractScoreDr']));
-                        } else {
-                          data.sort((a, b) => b['cataractScoreDr']
-                              .compareTo(a['cataractScoreDr']));
-                        }
+                      }
+                      if (ascending) {
+                        data.sort((a, b) => a['hypertensionScoreAI']
+                            .compareTo(b['hypertensionScoreAI']));
+                      } else {
+                        data.sort((a, b) => b['hypertensionScoreAI']
+                            .compareTo(a['hypertensionScoreAI']));
+                      }
+                      setState(() {
+                        _sort = !_sort; //これがないと繰り返しソート出来ない？
+                        // print("_sort:" + _sort.toString());
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("白内障診断（Dr）"),
+                    numeric: true,
+                    onSort: (int columnIndex, bool ascending) {
+                      // print("cataractScoreDr:" + ascending.toString());
+                      if (columnIndex != _sortColumnIndex) {
+                        _sortColumnIndex = 4;
                         setState(() {
-                          _sort = !_sort; //これがないと繰り返しソート出来ない？
-                          // print("_sort:" + _sort.toString());
+                          _sort = false; //ここで変更しておかないと
                         });
-                      },
-                    ),
-                    DataColumn(
-                      label: const Text("高血圧診断（Dr）"),
-                      numeric: true,
-                      onSort: (int columnIndex, bool ascending) {
-                        // print("hypertensionScoreDr:" + ascending.toString());
-                        if (columnIndex != _sortColumnIndex) {
-                          _sortColumnIndex = 5;
-                          setState(() {
-                            _sort = false; //ここで変更しておかないと
-                          });
-                        }
-                        if (ascending) {
-                          data.sort((a, b) => a['hypertensionScoreDr']
-                              .compareTo(b['hypertensionScoreDr']));
-                        } else {
-                          data.sort((a, b) => b['hypertensionScoreDr']
-                              .compareTo(a['hypertensionScoreDr']));
-                        }
+                      }
+                      if (ascending) {
+                        data.sort((a, b) => a['cataractScoreDr']
+                            .compareTo(b['cataractScoreDr']));
+                      } else {
+                        data.sort((a, b) => b['cataractScoreDr']
+                            .compareTo(a['cataractScoreDr']));
+                      }
+                      setState(() {
+                        _sort = !_sort; //これがないと繰り返しソート出来ない？
+                        // print("_sort:" + _sort.toString());
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("高血圧診断（Dr）"),
+                    numeric: true,
+                    onSort: (int columnIndex, bool ascending) {
+                      // print("hypertensionScoreDr:" + ascending.toString());
+                      if (columnIndex != _sortColumnIndex) {
+                        _sortColumnIndex = 5;
                         setState(() {
-                          _sort = !_sort; //これがないと繰り返しソート出来ない？
-                          // print("_sort:" + _sort.toString());
+                          _sort = false; //ここで変更しておかないと
                         });
-                      },
+                      }
+                      if (ascending) {
+                        data.sort((a, b) => a['hypertensionScoreDr']
+                            .compareTo(b['hypertensionScoreDr']));
+                      } else {
+                        data.sort((a, b) => b['hypertensionScoreDr']
+                            .compareTo(a['hypertensionScoreDr']));
+                      }
+                      setState(() {
+                        _sort = !_sort; //これがないと繰り返しソート出来ない？
+                        // print("_sort:" + _sort.toString());
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text(
+                      "備考",
                     ),
-                    DataColumn(
-                      label: const Text(
-                        "備考",
-                      ),
-                    )
-                  ],
-                  rows: [
-                    for (var grade in data)
-                      DataRow(
-                        // selected: _selected.contains(grade.name),
-                        // onSelectChanged: (bool value){
-                        //   setState((){
-                        //     if(value){
-                        //       _selected.add(grade.name);
-                        //     }else{
-                        //       _selected.remove(grade.name);
-                        //     }
-                        //   });
-                        // },
-                        cells: [
-                          DataCell(
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ThirdRoute()),
-                                );
-                              },
-                              child: Image.asset(
-                                'images/Thinkoutlogo.png',
-                                fit: BoxFit.cover,
-                                height: 20.0,
-                              ),
+                  )
+                ],
+                rows: [
+                  for (var grade in data)
+                    DataRow(
+                      // selected: _selected.contains(grade.name),
+                      // onSelectChanged: (bool value){
+                      //   setState((){
+                      //     if(value){
+                      //       _selected.add(grade.name);
+                      //     }else{
+                      //       _selected.remove(grade.name);
+                      //     }
+                      //   });
+                      // },
+                      cells: [
+                        DataCell(
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ThirdRoute()),
+                              );
+                            },
+                            child: Image.asset(
+                              'images/Thinkoutlogo.png',
+                              fit: BoxFit.cover,
+                              height: 20.0,
                             ),
                           ),
-                          DataCell(
-                            Text(grade['image']),
-                          ),
-                          DataCell(
-                            Text(grade['cataractScoreAI'].toString()),
-                          ),
-                          DataCell(
-                            Text(grade['hypertensionScoreAI'].toString()),
-                          ),
-                          DataCell(
-                            Text(grade['cataractScoreDr'].toString()),
-                          ),
-                          DataCell(
-                            Text(grade['hypertensionScoreDr'].toString()),
-                          ),
-                          DataCell(
-                            Container(
-                              width: 800,
-                              // height: 100,
-                              child: EditableText(
-                                maxLines: null,
-                                minLines: null,
-                                selectionWidthStyle: BoxWidthStyle.max,
-                                // forceLine: true,
-                                // expands: true,
-                                // textWidthBasis: TextWidthBasis.parent,
-                                controller:
-                                    TextEditingController.fromValue(null),
-                                focusNode: FocusNode(canRequestFocus: true),
-                                cursorColor: Colors.blue,
-                                style: TextStyle(color: Colors.black),
-                                backgroundCursorColor: Colors.black,
-                              ),
+                        ),
+                        DataCell(
+                          Text(grade['image']),
+                        ),
+                        DataCell(
+                          Text(grade['cataractScoreAI'].toString()),
+                        ),
+                        DataCell(
+                          Text(grade['hypertensionScoreAI'].toString()),
+                        ),
+                        DataCell(
+                          Text(grade['cataractScoreDr'].toString()),
+                        ),
+                        DataCell(
+                          Text(grade['hypertensionScoreDr'].toString()),
+                        ),
+                        DataCell(
+                          Container(
+                            width: 800,
+                            // height: 100,
+                            child: EditableText(
+                              maxLines: null,
+                              minLines: null,
+                              selectionWidthStyle: BoxWidthStyle.max,
+                              // forceLine: true,
+                              // expands: true,
+                              // textWidthBasis: TextWidthBasis.parent,
+                              controller: TextEditingController.fromValue(null),
+                              focusNode: FocusNode(canRequestFocus: true),
+                              cursorColor: Colors.blue,
+                              style: TextStyle(color: Colors.black),
+                              backgroundCursorColor: Colors.black,
                             ),
-                            placeholder: true,
-                          )
-                        ],
-                      ),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
+                          ),
+                          placeholder: true,
+                        )
+                      ],
+                    ),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
 
-              // By default, show a loading spinner.
-              return CircularProgressIndicator();
-            },
-          ),
-        )));
+            return Center();
+            // By default, show a loading spinner.
+            // return Center(
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     mainAxisSize: MainAxisSize.max,
+            //     children: <Widget>[
+            //       CircularProgressIndicator()
+            //     ],
+            //   ),
+            // );
+          },
+        ),
+      )),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.autorenew),
+        onPressed: () => _reload(),
+      ),
+    );
   }
 }
 
