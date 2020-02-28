@@ -1,8 +1,10 @@
+import 'dart:html';
 import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:http/http.dart' as http;
 
@@ -161,7 +163,6 @@ class _SecondRoute extends State<SecondRoute> {
     setState(() {});
   }
 
-  List<String> _selected = [];
   bool _sort = true;
   int _sortColumnIndex = 1;
 
@@ -454,6 +455,36 @@ class ThirdRoute extends StatefulWidget {
 }
 
 class _ThirdRoute extends State<ThirdRoute> {
+  PhotoViewScaleStateController scaleStateController;
+  PhotoViewControllerBase controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = PhotoViewController();
+    scaleStateController = PhotoViewScaleStateController();
+    mouseEventListener();
+  }
+
+  // マウスホイールの動きを検知する
+  void mouseEventListener() {
+    document.body.onMouseWheel.listen((event) {
+      if (controller.scale + event.deltaY * -0.01 > 1) {
+        controller.scale += event.deltaY * -0.01;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scaleStateController.dispose();
+    super.dispose();
+  }
+
+  void goBack() {
+    scaleStateController.scaleState = PhotoViewScaleState.initial;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -474,10 +505,19 @@ class _ThirdRoute extends State<ThirdRoute> {
             ],
           ),
         ),
-        body: Container(
-            child: PhotoView(
-          imageProvider: AssetImage('images/Thinkoutlogo.png'),
-        )));
+        body: Stack(
+          children: <Widget>[
+            PhotoView(
+                imageProvider: AssetImage("images/Thinkoutlogo.png"),
+                scaleStateController: scaleStateController,
+                controller: controller,
+                minScale: 1),
+            FlatButton(
+              child: Text("サイズを戻す"),
+              onPressed: goBack,
+            )
+          ],
+        ));
   }
 }
 
