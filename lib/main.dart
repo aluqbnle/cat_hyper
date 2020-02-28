@@ -276,8 +276,8 @@ class _ThirdRoute extends State<ThirdRoute> {
   // マウスホイールの動きを検知する
   void mouseEventListener() {
     document.body.onMouseWheel.listen((event) {
-      if (controller.scale + event.deltaY / 100 > 1) {
-        controller.scale += event.deltaY / 100;
+      if (controller.scale + event.deltaY * -0.01 > 1) {
+        controller.scale += event.deltaY * -0.01;
       }
     });
   }
