@@ -1,4 +1,5 @@
 # cat_hyper
+[![Codemagic build status](https://api.codemagic.io/apps/5e593293e38993000aa3dbd5/5e593293e38993000aa3dbd4/status_badge.svg)](https://codemagic.io/apps/5e593293e38993000aa3dbd5/5e593293e38993000aa3dbd4/latest_build)
 
 A new Flutter project.
 
