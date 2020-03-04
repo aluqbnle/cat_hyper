@@ -122,7 +122,12 @@ class _ChangeFormState extends State<ChangeForm> {
       this._formKey.currentState.save();
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Processing Data')));
-      print(this._targetDirectory);
+      var uri = Uri.http('localhost:8080', '/suitable_link',
+          {"dir": _targetDirectory}); // TODO: 適当なポート/リンクに変更
+      http.get(uri).then((value) => {
+            // サーバーからレスポンスがあったあとの処理
+            null
+          });
     }
   }
 }
