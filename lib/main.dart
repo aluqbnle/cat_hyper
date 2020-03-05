@@ -415,7 +415,7 @@ class _SecondRoute extends State<SecondRoute> {
                           TextField(
                             controller: TextEditingController.fromValue(TextEditingValue(text: grade['cataractScoreDr'].toString())),
                             onSubmitted: (value) {
-                              grade['cataractScoreDr'] = value;
+                              grade['cataractScoreDr'] = int.tryParse(value);
                               print('catDr:'+grade['cataractScoreDr']);// 確認用
                               setState(() {});
                             },
@@ -426,7 +426,7 @@ class _SecondRoute extends State<SecondRoute> {
                           TextField(
                             controller: TextEditingController.fromValue(TextEditingValue(text: grade['hypertensionScoreDr'].toString())),
                             onSubmitted: (value) {
-                              grade['hypertensionScoreDr'] = value;
+                              grade['hypertensionScoreDr'] = int.tryParse(value);
                               print('hyperDr:'+grade['hypertensionScoreDr']);// 確認用
                               setState(() {});
                             },
@@ -436,16 +436,14 @@ class _SecondRoute extends State<SecondRoute> {
                           Container(
                             width: 800,
                             // height: 100,
-                            child: EditableText(
-                              maxLines: null,
-                              minLines: null,
-                              selectionWidthStyle: BoxWidthStyle.max,
-                              controller: TextEditingController.fromValue(null),
-                              focusNode: FocusNode(canRequestFocus: true),
-                              cursorColor: Colors.blue,
-                              style: TextStyle(color: Colors.black),
-                              backgroundCursorColor: Colors.black,
-                            ),
+                            child: TextField(
+                              controller: TextEditingController.fromValue(TextEditingValue(text: grade['note'].toString())),
+                              onSubmitted: (value) {
+                                grade['note'] = int.tryParse(value);
+                                print('note:'+grade['note']);// 確認用
+                                setState(() {});
+                              },
+                            )
                           ),
                           placeholder: true,
                         )
