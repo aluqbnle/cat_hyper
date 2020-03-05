@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
 
@@ -165,7 +166,7 @@ Future<Grade> fetchGrade() async {
     return Grade.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   } else {
     // If the server did not return a 200 OK response, then throw an exception.
-    throw Exception('Failed to load album');
+    throw Exception('Failed to load data');
   }
 }
 
@@ -384,16 +385,6 @@ class _SecondRoute extends State<SecondRoute> {
                 rows: [
                   for (var grade in data)
                     DataRow(
-                      // selected: _selected.contains(grade.name),
-                      // onSelectChanged: (bool value){
-                      //   setState((){
-                      //     if(value){
-                      //       _selected.add(grade.name);
-                      //     }else{
-                      //       _selected.remove(grade.name);
-                      //     }
-                      //   });
-                      // },
                       cells: [
                         DataCell(
                           FlatButton(
@@ -421,10 +412,25 @@ class _SecondRoute extends State<SecondRoute> {
                           Text(grade['hypertensionScoreAI'].toString()),
                         ),
                         DataCell(
-                          Text(grade['cataractScoreDr'].toString()),
+                          TextField(
+                            controller: TextEditingController.fromValue(TextEditingValue(text: grade['cataractScoreDr'].toString())),
+                            onSubmitted: (value) {
+                              grade['cataractScoreDr'] = value;
+                              print('catDr:'+grade['cataractScoreDr']);// 確認用
+                              setState(() {});
+                            },
+                          )
                         ),
                         DataCell(
-                          Text(grade['hypertensionScoreDr'].toString()),
+                          // Text(grade['hypertensionScoreDr'].toString()),
+                          TextField(
+                            controller: TextEditingController.fromValue(TextEditingValue(text: grade['hypertensionScoreDr'].toString())),
+                            onSubmitted: (value) {
+                              grade['hypertensionScoreDr'] = value;
+                              print('hyperDr:'+grade['hypertensionScoreDr']);// 確認用
+                              setState(() {});
+                            },
+                          )
                         ),
                         DataCell(
                           Container(
@@ -434,9 +440,6 @@ class _SecondRoute extends State<SecondRoute> {
                               maxLines: null,
                               minLines: null,
                               selectionWidthStyle: BoxWidthStyle.max,
-                              // forceLine: true,
-                              // expands: true,
-                              // textWidthBasis: TextWidthBasis.parent,
                               controller: TextEditingController.fromValue(null),
                               focusNode: FocusNode(canRequestFocus: true),
                               cursorColor: Colors.blue,
