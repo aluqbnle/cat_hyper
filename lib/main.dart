@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
-import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
 
@@ -200,6 +200,7 @@ class _SecondRoute extends State<SecondRoute> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
           children: <Widget>[
             FlatButton(
@@ -213,26 +214,25 @@ class _SecondRoute extends State<SecondRoute> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(left: 300.0),
-              // margin: const EdgeInsets.all(4.0),
-              child: IconButton(
+//              padding: const EdgeInsets.only(left: 300.0),
+                // margin: const EdgeInsets.all(4.0),
+                child: Row(children: [
+              IconButton(
                 icon: Icon(Icons.clear),
                 onPressed: () {
                   Navigator.pop(context); //ナビゲーションをもどる
                 },
               ),
-            ),
-            Container(
-              // padding: const EdgeInsets.only(right:5.0),
-              // margin: const EdgeInsets.all(4.0),
-              child: IconButton(
+              IconButton(
                 icon: Icon(Icons.save),
                 onPressed: () async {
                   // print(data);
-                  Map<String, String> headers = {'content-type': 'application/json'};
+                  Map<String, String> headers = {
+                    'content-type': 'application/json'
+                  };
                   String body = json.encode({'data': data});
-                  final response = await http
-                      .post('http://localhost:3000/data', headers: headers, body: body);
+                  final response = await http.post('http://localhost:3000/data',
+                      headers: headers, body: body);
                   if (response.statusCode == 200) {
                     print("success!");
                   } else {
@@ -240,13 +240,11 @@ class _SecondRoute extends State<SecondRoute> {
                   }
                 },
               ),
-            ),
-            Container(
-              child: IconButton(
+              IconButton(
                 icon: Icon(Icons.autorenew),
                 onPressed: () => _reload(),
-              ),
-            ),
+              )
+            ])),
           ],
         ),
       ),
