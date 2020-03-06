@@ -75,32 +75,35 @@ class _ChangeFormState extends State<ChangeForm> {
                 //     fontWeight: FontWeight.w500
                 //   ),
                 // ),
-                RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SecondRoute()),
-                    );
-                  },
-                  color: Colors.grey,
-                  shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                        top: 40.0, left: 15.0, right: 15.0),
-                    margin: const EdgeInsets.all(4.0),
-                    height: 100,
-                    width: 200,
-                    child: const Text(
-                      'フォルダ選択',
-                      style: TextStyle(color: Colors.black, fontSize: 15.0),
-                    ),
-                  ),
-                ),
+                // RaisedButton(
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) =>
+                //               SecondRoute(folderPath: _targetDirectory)),
+                //     );
+                //   },
+                //   color: Colors.grey,
+                //   shape: OutlineInputBorder(
+                //     borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                //   ),
+                //   child: Container(
+                //     padding: const EdgeInsets.only(
+                //         top: 40.0, left: 15.0, right: 15.0),
+                //     margin: const EdgeInsets.all(4.0),
+                //     height: 100,
+                //     width: 200,
+                //     child: const Text(
+                //       'フォルダ選択',
+                //       style: TextStyle(color: Colors.black, fontSize: 15.0),
+                //     ),
+                //   ),
+                // ),
                 new TextFormField(
-                    onSaved: (String value) {
+                    onFieldSubmitted: (String value) {
                       _targetDirectory = value;
+                      setState(() {});
                     },
                     validator: (String value) {
                       return value.isEmpty ? '必須入力です' : null;
@@ -121,14 +124,19 @@ class _ChangeFormState extends State<ChangeForm> {
   void _submission() {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Processing Data')));
-      var uri = Uri.http('localhost:8080', '/suitable_link',
-          {"dir": _targetDirectory}); // TODO: 適当なポート/リンクに変更
-      http.get(uri).then((value) => {
-            // サーバーからレスポンスがあったあとの処理
-            null
-          });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SecondRoute(folderPath: _targetDirectory)),
+      );
+      // Scaffold.of(context)
+      //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+      // var uri = Uri.http('localhost:8080', '/suitable_link',
+      //     {"dir": _targetDirectory}); // TODO: 適当なポート/リンクに変更
+      // http.get(uri).then((value) => {
+      //       // サーバーからレスポンスがあったあとの処理
+      //       null
+      //     });
     }
   }
 }
@@ -156,8 +164,9 @@ class Grade {
   }
 }
 
-Future<Grade> fetchGrade() async {
-  final response = await http.get('http://localhost:3000/data');
+Future<Grade> fetchGrade(String folderPath) async {
+  String body = json.encode({'folderPath': folderPath});
+  final response = await http.post('http://localhost:3000/data',body: body);
   // final response = await http.get('https://dev-test.fujiya228.com/flutter/cat_hyper/sample.json');
 
   if (response.statusCode == 200) {
@@ -171,24 +180,37 @@ Future<Grade> fetchGrade() async {
 }
 
 class SecondRoute extends StatefulWidget {
+  final String folderPath;
+
+  SecondRoute({this.folderPath}) {
+    // print('secondRoute constructor');
+  }
   @override
-  _SecondRoute createState() => _SecondRoute();
+  _SecondRoute createState() => _SecondRoute({this.folderPath});
 }
 
 class _SecondRoute extends State<SecondRoute> {
   //const になっていたためソート出来ていなかった（sortが使えていなかった）
   Future<Grade> grade;
   List data;
+  String folderPath;
+
+  _SecondRoute(Set<String> set, {this.folderPath}) {
+    // print('_secondRoute constructor');
+    // this.folderPath = folderPath;
+  }
 
   @override
   void initState() {
     super.initState();
-    grade = fetchGrade();
+    folderPath = widget.folderPath;
+    print('folderPath'+folderPath);
+    grade = fetchGrade(folderPath);
     // print('initState:' + grade.toString());
   }
 
   void _reload() {
-    grade = fetchGrade();
+    grade = fetchGrade(folderPath);
     setState(() {});
   }
 
@@ -229,12 +251,15 @@ class _SecondRoute extends State<SecondRoute> {
                 icon: Icon(Icons.save),
                 onPressed: () async {
                   // print(data);
-                  Map<String, String> headers = {'content-type': 'application/json'};
+                  Map<String, String> headers = {
+                    'content-type': 'application/json'
+                  };
                   String body = json.encode({'data': data});
-                  final response = await http
-                      .post('http://localhost:3000/data', headers: headers, body: body);
+                  final response = await http.post('http://localhost:3000/data',
+                      headers: headers, body: body);
                   if (response.statusCode == 200) {
                     print("success!");
+                    _reload();
                   } else {
                     throw Exception('Failed to post data');
                   }
