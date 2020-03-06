@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
 
@@ -165,7 +166,7 @@ Future<Grade> fetchGrade() async {
     return Grade.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   } else {
     // If the server did not return a 200 OK response, then throw an exception.
-    throw Exception('Failed to load album');
+    throw Exception('Failed to load data');
   }
 }
 
@@ -177,6 +178,7 @@ class SecondRoute extends StatefulWidget {
 class _SecondRoute extends State<SecondRoute> {
   //const になっていたためソート出来ていなかった（sortが使えていなかった）
   Future<Grade> grade;
+  List data;
 
   @override
   void initState() {
@@ -225,8 +227,17 @@ class _SecondRoute extends State<SecondRoute> {
               // margin: const EdgeInsets.all(4.0),
               child: IconButton(
                 icon: Icon(Icons.save),
-                onPressed: () {
-                  Navigator.pop(context); //ナビゲーションをもどる
+                onPressed: () async {
+                  // print(data);
+                  Map<String, String> headers = {'content-type': 'application/json'};
+                  String body = json.encode({'data': data});
+                  final response = await http
+                      .post('http://localhost:3000/data', headers: headers, body: body);
+                  if (response.statusCode == 200) {
+                    print("success!");
+                  } else {
+                    throw Exception('Failed to post data');
+                  }
                 },
               ),
             ),
@@ -247,7 +258,7 @@ class _SecondRoute extends State<SecondRoute> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               // print(snapshot.data.data);
-              List data = snapshot.data.data;
+              data = snapshot.data.data;
               // print(data);
               return DataTable(
                 sortAscending: _sort,
@@ -384,16 +395,6 @@ class _SecondRoute extends State<SecondRoute> {
                 rows: [
                   for (var grade in data)
                     DataRow(
-                      // selected: _selected.contains(grade.name),
-                      // onSelectChanged: (bool value){
-                      //   setState((){
-                      //     if(value){
-                      //       _selected.add(grade.name);
-                      //     }else{
-                      //       _selected.remove(grade.name);
-                      //     }
-                      //   });
-                      // },
                       cells: [
                         DataCell(
                           FlatButton(
@@ -420,30 +421,46 @@ class _SecondRoute extends State<SecondRoute> {
                         DataCell(
                           Text(grade['hypertensionScoreAI'].toString()),
                         ),
+                        DataCell(TextField(
+                          controller: TextEditingController.fromValue(
+                              TextEditingValue(
+                                  text: grade['cataractScoreDr'].toString())),
+                          onSubmitted: (value) {
+                            grade['cataractScoreDr'] = int.tryParse(value);
+                            print('catDr:' + grade['cataractScoreDr']); // 確認用
+                            setState(() {});
+                          },
+                        )),
                         DataCell(
-                          Text(grade['cataractScoreDr'].toString()),
-                        ),
-                        DataCell(
-                          Text(grade['hypertensionScoreDr'].toString()),
+                          // Text(grade['hypertensionScoreDr'].toString()),
+                          TextField(
+                            controller: TextEditingController.fromValue(
+                                TextEditingValue(
+                                    text: grade['hypertensionScoreDr']
+                                        .toString())),
+                            onSubmitted: (value) {
+                              grade['hypertensionScoreDr'] =
+                                  int.tryParse(value);
+                              print('hyperDr:' +
+                                  grade['hypertensionScoreDr']); // 確認用
+                              setState(() {});
+                            },
+                          ),
                         ),
                         DataCell(
                           Container(
-                            width: 800,
-                            // height: 100,
-                            child: EditableText(
-                              maxLines: null,
-                              minLines: null,
-                              selectionWidthStyle: BoxWidthStyle.max,
-                              // forceLine: true,
-                              // expands: true,
-                              // textWidthBasis: TextWidthBasis.parent,
-                              controller: TextEditingController.fromValue(null),
-                              focusNode: FocusNode(canRequestFocus: true),
-                              cursorColor: Colors.blue,
-                              style: TextStyle(color: Colors.black),
-                              backgroundCursorColor: Colors.black,
-                            ),
-                          ),
+                              width: 800,
+                              // height: 100,
+                              child: TextField(
+                                controller: TextEditingController.fromValue(
+                                    TextEditingValue(
+                                        text: grade['note'].toString())),
+                                onSubmitted: (value) {
+                                  grade['note'] = value;
+                                  print('note:' + grade['note']); // 確認用
+                                  setState(() {});
+                                },
+                              )),
                           placeholder: true,
                         )
                       ],
