@@ -261,13 +261,13 @@ class _SecondRoute extends State<SecondRoute> {
               return DataTable(
                 sortAscending: _sort,
                 sortColumnIndex: _sortColumnIndex,
-                horizontalMargin: 0,
+                columnSpacing: 15.0,
                 columns: [
-                  const DataColumn(
-                    label: Text("画像"),
+                  DataColumn(
+                    label: const Text("画像"),
                   ),
                   DataColumn(
-                    label: Text("ファイル名"),
+                    label: const Text("ファイル名"),
                     numeric: true,
                     onSort: (int columnIndex, bool ascending) {
                       // print("cataractScoreAI:" + ascending.toString());
