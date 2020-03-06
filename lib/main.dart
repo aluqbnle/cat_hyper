@@ -420,6 +420,10 @@ class _SecondRoute extends State<SecondRoute> {
                           Text(grade['hypertensionScoreAI'].toString()),
                         ),
                         DataCell(TextField(
+                          decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]),
+                          )),
                           controller: TextEditingController.fromValue(
                               TextEditingValue(
                                   text: grade['cataractScoreDr'].toString())),
@@ -432,6 +436,10 @@ class _SecondRoute extends State<SecondRoute> {
                         DataCell(
                           // Text(grade['hypertensionScoreDr'].toString()),
                           TextField(
+                            decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey[300]),
+                            )),
                             controller: TextEditingController.fromValue(
                                 TextEditingValue(
                                     text: grade['hypertensionScoreDr']
@@ -450,6 +458,11 @@ class _SecondRoute extends State<SecondRoute> {
                               width: 800,
                               // height: 100,
                               child: TextField(
+                                decoration: InputDecoration(
+                                    enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]),
+                                )),
                                 controller: TextEditingController.fromValue(
                                     TextEditingValue(
                                         text: grade['note'].toString())),
