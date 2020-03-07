@@ -165,8 +165,8 @@ class Grade {
 }
 
 Future<Grade> fetchGrade(String folderPath) async {
-  String body = json.encode({'folderPath': folderPath});
-  final response = await http.post('http://localhost:3000/data',body: body);
+  // String body = json.encode({'folderPath': folderPath});
+  final response = await http.get('http://localhost:3000/data?folderpath='+folderPath);
   // final response = await http.get('https://dev-test.fujiya228.com/flutter/cat_hyper/sample.json');
 
   if (response.statusCode == 200) {
@@ -255,7 +255,7 @@ class _SecondRoute extends State<SecondRoute> {
                     'content-type': 'application/json'
                   };
                   String body = json.encode({'data': data});
-                  final response = await http.post('http://localhost:3000/data',
+                  final response = await http.put('http://localhost:3000/data?folderpath='+folderPath,
                       headers: headers, body: body);
                   if (response.statusCode == 200) {
                     print("success!");
