@@ -483,16 +483,6 @@ class _SecondRoute extends State<SecondRoute> {
             }
 
             return Center();
-            // By default, show a loading spinner.
-            // return Center(
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     mainAxisSize: MainAxisSize.max,
-            //     children: <Widget>[
-            //       CircularProgressIndicator()
-            //     ],
-            //   ),
-            // );
           },
         ),
       )),
