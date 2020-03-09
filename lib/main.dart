@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
-import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
 
@@ -200,6 +200,7 @@ class _SecondRoute extends State<SecondRoute> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisAlignment: MainAxisAlignment.start,特になくても動く？なにこれ
           children: <Widget>[
             FlatButton(
@@ -213,26 +214,25 @@ class _SecondRoute extends State<SecondRoute> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(left: 300.0),
-              // margin: const EdgeInsets.all(4.0),
-              child: IconButton(
+//              padding: const EdgeInsets.only(left: 300.0),
+                // margin: const EdgeInsets.all(4.0),
+                child: Row(children: [
+              IconButton(
                 icon: Icon(Icons.clear),
                 onPressed: () {
                   Navigator.pop(context); //ナビゲーションをもどる
                 },
               ),
-            ),
-            Container(
-              // padding: const EdgeInsets.only(right:5.0),
-              // margin: const EdgeInsets.all(4.0),
-              child: IconButton(
+              IconButton(
                 icon: Icon(Icons.save),
                 onPressed: () async {
                   // print(data);
-                  Map<String, String> headers = {'content-type': 'application/json'};
+                  Map<String, String> headers = {
+                    'content-type': 'application/json'
+                  };
                   String body = json.encode({'data': data});
-                  final response = await http
-                      .post('http://localhost:3000/data', headers: headers, body: body);
+                  final response = await http.post('http://localhost:3000/data',
+                      headers: headers, body: body);
                   if (response.statusCode == 200) {
                     print("success!");
                   } else {
@@ -240,13 +240,11 @@ class _SecondRoute extends State<SecondRoute> {
                   }
                 },
               ),
-            ),
-            Container(
-              child: IconButton(
+              IconButton(
                 icon: Icon(Icons.autorenew),
                 onPressed: () => _reload(),
-              ),
-            ),
+              )
+            ])),
           ],
         ),
       ),
@@ -263,13 +261,13 @@ class _SecondRoute extends State<SecondRoute> {
               return DataTable(
                 sortAscending: _sort,
                 sortColumnIndex: _sortColumnIndex,
-                horizontalMargin: 0,
+                columnSpacing: 15.0,
                 columns: [
-                  const DataColumn(
-                    label: Text("画像"),
+                  DataColumn(
+                    label: const Text("画像"),
                   ),
                   DataColumn(
-                    label: Text("ファイル名"),
+                    label: const Text("ファイル名"),
                     numeric: true,
                     onSort: (int columnIndex, bool ascending) {
                       // print("cataractScoreAI:" + ascending.toString());
@@ -422,6 +420,10 @@ class _SecondRoute extends State<SecondRoute> {
                           Text(grade['hypertensionScoreAI'].toString()),
                         ),
                         DataCell(TextField(
+                          decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300]),
+                          )),
                           controller: TextEditingController.fromValue(
                               TextEditingValue(
                                   text: grade['cataractScoreDr'].toString())),
@@ -434,6 +436,10 @@ class _SecondRoute extends State<SecondRoute> {
                         DataCell(
                           // Text(grade['hypertensionScoreDr'].toString()),
                           TextField(
+                            decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey[300]),
+                            )),
                             controller: TextEditingController.fromValue(
                                 TextEditingValue(
                                     text: grade['hypertensionScoreDr']
@@ -452,6 +458,11 @@ class _SecondRoute extends State<SecondRoute> {
                               width: 800,
                               // height: 100,
                               child: TextField(
+                                decoration: InputDecoration(
+                                    enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]),
+                                )),
                                 controller: TextEditingController.fromValue(
                                     TextEditingValue(
                                         text: grade['note'].toString())),
@@ -472,16 +483,6 @@ class _SecondRoute extends State<SecondRoute> {
             }
 
             return Center();
-            // By default, show a loading spinner.
-            // return Center(
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     mainAxisSize: MainAxisSize.max,
-            //     children: <Widget>[
-            //       CircularProgressIndicator()
-            //     ],
-            //   ),
-            // );
           },
         ),
       )),
